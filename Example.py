@@ -2,13 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from sklearn import datasets
-from sklearn.svm import SVC, SVR
-from sklearn.linear_model import LogisticRegression
-from sklearn.kernel_ridge import KernelRidge
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.kernel_ridge import KernelRidge
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mean_squared_error
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.svm import SVC, SVR
 
 from cross_validation_models import ClassifierCV, RegressorCV
 
@@ -38,6 +38,7 @@ def classifier_example():
 
     print(clf.outputs)
     clf.plot_error()
+
 
 def regressor_example():
     # Generate sample data

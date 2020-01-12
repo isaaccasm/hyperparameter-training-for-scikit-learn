@@ -1,8 +1,8 @@
 import time
 
 import numpy as np
-from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error, log_loss, accuracy_score
+from sklearn.model_selection import KFold
 
 from cross_validation_base import CVModel
 
