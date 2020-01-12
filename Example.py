@@ -46,7 +46,7 @@ def regressor_example():
     Xt = np.sort(5 * np.random.rand(50, 1), axis=0)
     yt = np.sin(Xt).ravel()
     # Add noise to targets
-    yt += 3 * (0.5 - np.random.rand(num_points))
+    yt += 0.1 * (np.random.rand(num_points))
 
     X_test = Xt[test_pos:]
     y_test = yt[test_pos:]
