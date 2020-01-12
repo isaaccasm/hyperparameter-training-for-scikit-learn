@@ -16,7 +16,23 @@ class CVModel(object):
 
     def __init__(self, models, space, num_iter=50, random_state=5, verbose=False, validation_split=0.1,
                  objective=None):
-
+        """
+        Constructor of the CVModel.
+        :param models: A list of scikit-learn models
+        :param space: A list with the space. Each element in the list is a dictionary for the correspondent element in
+                        models. The keys of the dictionary follow the scikit-learn standard to characterise the elements
+                        in a model, similar to sklearn.model_selection.GridSearchCV. For instance, if te model name is
+                        polynomialfeatures and you want to affect the parameter degree the key would be:
+                        'polynomialfeatures__degree'.
+                        The values of the dictionary follows the standard of scikit optimize. For instance, a list means
+                        specific values [1,2,3], [True, False], ['random', 'type'], a tuple means a set of continuous
+                        values like (0,10), any value from 0 to 10.
+        :param num_iter: integer Number of iteration. (default 50)
+        :param random_state: integer. For the scikit-optimize model. (default 5)
+        :param verbose: When True plot some values.
+        :param validation_split: The percentage of the data that is going to be used in the validation (default 0.1)
+        :param objective: The objective to optimize the model.
+        """
         self.num_iter = num_iter
         self.random_state = random_state
         self.verbose = verbose
@@ -69,7 +85,7 @@ class CVModel(object):
                 if name in attributes:
                     setattr(self._model, name, p)
                 else:
-                    raise NameError('model {} does not have attribute {}'.format(self._model, name))
+                    raise NameError('model {} does not have attribute {}'.format(type(self._model).__name__, name))
 
     def _objective(self, params, Xt, yt, k=10, return_all=False, **kwargs):
         """
@@ -84,19 +100,19 @@ class CVModel(object):
         """
         NotImplementedError('Create a child with an objective function or pass one as input.')
 
-    def welch_test(self, dic1, dic2):
+    def welch_test(self, var1, var2):
         """
         Compute the welch test between the results
-        :param dic1: Dictionary with mean and standard deviation for the first class
-        :param dic2: Dictionary with mean and standard deviation for the second class
+        :param var1: Values of the first class
+        :param var2: Values of the second class
         :return: The p-value
         """
-        m1 = np.mean(dic1)
-        m2 = np.mean(dic2)
-        s1 = np.std(dic1)
-        s2 = np.std(dic2)
-        n1 = len(dic1)
-        n2 = len(dic2)
+        m1 = np.mean(var1)
+        m2 = np.mean(var2)
+        s1 = np.std(var1)
+        s2 = np.std(var2)
+        n1 = len(var1)
+        n2 = len(var2)
 
         vn1 = s1 ** 2 / n1
         vn2 = s2 ** 2 / n2
@@ -143,8 +159,8 @@ class CVModel(object):
             n = len(self.outputs['classifiers'])
             p_values_err = np.zeros([n, n])
             p_values_time = np.zeros([n, n])
-            for id1, dic1 in enumerate(self.outputs['classifiers']):
-                for id2, dic2 in enumerate(self.outputs['classifiers']):
+            for id1, var1 in enumerate(self.outputs['classifiers']):
+                for id2, var2 in enumerate(self.outputs['classifiers']):
                     if id1 == id2:
                         p_values_err[id1, id2] = 1.0
                         p_values_time[id1, id2] = 1.0
@@ -152,8 +168,8 @@ class CVModel(object):
                         p_values_err[id1, id2] = p_values_err[id2, id1]
                         p_values_time[id1, id2] = p_values_time[id2, id1]
                     else:
-                        p_values_err[id1, id2] = test(dic1['validation'], dic2['validation'])
-                        p_values_time[id1, id2] = test(dic1['time'], dic2['time'])
+                        p_values_err[id1, id2] = test(var1['validation'], var2['validation'])
+                        p_values_time[id1, id2] = test(var1['time'], var2['time'])
 
             self.outputs['p_values_error'] = p_values_err
             self.outputs['p_values_time'] = p_values_time
