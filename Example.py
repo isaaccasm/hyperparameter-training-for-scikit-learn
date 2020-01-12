@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 from sklearn import datasets
@@ -5,6 +6,7 @@ from sklearn.svm import SVC, SVR
 from sklearn.linear_model import LogisticRegression
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.metrics import mean_squared_error
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
@@ -39,11 +41,17 @@ def classifier_example():
 
 def regressor_example():
     # Generate sample data
-    X = np.sort(5 * np.random.rand(40, 1), axis=0)
-    y = np.sin(X).ravel()
-
+    num_points = 50
+    test_pos = int(0.8*num_points) + 1
+    Xt = np.sort(5 * np.random.rand(50, 1), axis=0)
+    yt = np.sin(Xt).ravel()
     # Add noise to targets
-    y[::5] += 3 * (0.5 - np.random.rand(8))
+    yt += 3 * (0.5 - np.random.rand(num_points))
+
+    X_test = Xt[test_pos:]
+    y_test = yt[test_pos:]
+    X = Xt[:test_pos]
+    y = yt[:test_pos]
 
     rf = RandomForestRegressor()
     sp_rf = {'n_estimators':list(range(10,200)),'min_samples_leaf': list(range(1, 30)), 'min_weight_fraction_leaf': (0, 0.4)}
@@ -68,6 +76,15 @@ def regressor_example():
 
     print(clf.outputs)
     clf.plot_error()
+
+    print('mean squared error of test data: {}'.format(mean_squared_error(y_test, clf.predict(X_test))))
+
+    y_pred = clf.predict(Xt)
+
+    plt.plot(Xt, yt, 'r')
+    plt.plot(Xt, y_pred)
+    plt.legend(['data', 'prediction'])
+    plt.show()
 
 if __name__ == '__main__':
     #classifier_example()
