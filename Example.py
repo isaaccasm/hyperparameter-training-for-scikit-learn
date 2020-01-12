@@ -57,7 +57,7 @@ def regressor_example():
     svr_poly = SVR(kernel='poly', epsilon=.1)
     sp_svr_poly = {'C': np.logspace(0.1, 1000, num=500), 'gamma': [0.01, 1], 'degree':[2,3], 'coef0':(-5,5)}
 
-    kr = KernelRidge(kernel='rbf'),
+    kr = KernelRidge(kernel='rbf')
     sp_kr = {"alpha": [1e0, 0.1, 1e-2, 1e-3], "gamma": np.logspace(-2, 2, 5)}
 
     space = [sp_rf, sp_kr, sp_svr_lin, sp_svr_rbf, sp_svr_poly]
