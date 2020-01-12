@@ -49,19 +49,16 @@ def regressor_example():
     sp_rf = {'n_estimators':list(range(10,200)),'min_samples_leaf': list(range(1, 30)), 'min_weight_fraction_leaf': (0, 0.4)}
 
     svr_rbf = SVR(kernel='rbf', epsilon=.1)
-    sp_svr_rbf = {'C': np.logspace(0.1, 1000, 'log-uniform'), 'gamma': [0.01, 1]}
+    sp_svr_rbf = {'C': np.logspace(0.1, 1000, num=500), 'gamma': [0.01, 1]}
 
     svr_lin = SVR(kernel='linear', gamma='auto')
-    sp_svr_lin = {'C': np.logspace(0.1, 500, 'log-uniform')}
+    sp_svr_lin = {'C': np.logspace(0.1, 500, num=500)}
 
     svr_poly = SVR(kernel='poly', epsilon=.1)
-    sp_svr_poly = {'C': np.logspace(0.1, 1000, 'log-uniform'), 'gamma': [0.01, 1],
-                   'degree':[2,3], 'coef0':(-5,5)}
+    sp_svr_poly = {'C': np.logspace(0.1, 1000, num=500), 'gamma': [0.01, 1], 'degree':[2,3], 'coef0':(-5,5)}
 
     kr = KernelRidge(kernel='rbf'),
-    sp_kr = {"alpha": [1e0, 0.1, 1e-2, 1e-3],
-                  "gamma": np.logspace(-2, 2, 5)}
-
+    sp_kr = {"alpha": [1e0, 0.1, 1e-2, 1e-3], "gamma": np.logspace(-2, 2, 5)}
 
     space = [sp_rf, sp_kr, sp_svr_lin, sp_svr_rbf, sp_svr_poly]
     models = [rf, kr, svr_lin, svr_rbf, svr_poly]
@@ -73,4 +70,4 @@ def regressor_example():
     clf.plot_error()
 
 if __name__ == '__main__':
-    classifier_example()
+    regressor_example()
