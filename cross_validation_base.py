@@ -178,7 +178,7 @@ class CVModel(object):
             self._model = self._models[0]
             self.params = self.outputs['classifiers'][0]['best_parameters']
 
-            print('The selected model is {}, the id is: {}'.format(type(self._model).__name__, self._id))
+        print('The selected model is {}, the id is: {}'.format(repr(self._model), self._id))
 
         self.names = list(self.params.keys())
         self.set_model_parameters(list(self.params.values()))
