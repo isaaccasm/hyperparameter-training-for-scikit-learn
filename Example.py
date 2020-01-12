@@ -1,11 +1,14 @@
+import numpy as np
+
 from sklearn import datasets
-from sklearn.svm import SVC
+from sklearn.svm import SVC, SVR
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.kernel_ridge import KernelRidge
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
-from cross_validation_models import ClassifierCV
+from cross_validation_models import ClassifierCV, RegressorCV
 
 def classifier_example():
     iris = datasets.load_iris()
@@ -34,7 +37,40 @@ def classifier_example():
     print(clf.outputs)
     clf.plot_error()
 
+def regressor_example():
+    # Generate sample data
+    X = np.sort(5 * np.random.rand(40, 1), axis=0)
+    y = np.sin(X).ravel()
 
+    # Add noise to targets
+    y[::5] += 3 * (0.5 - np.random.rand(8))
+
+    rf = RandomForestRegressor()
+    sp_rf = {'n_estimators':list(range(10,200)),'min_samples_leaf': list(range(1, 30)), 'min_weight_fraction_leaf': (0, 0.4)}
+
+    svr_rbf = SVR(kernel='rbf', epsilon=.1)
+    sp_svr_rbf = {'C': np.logspace(0.1, 1000, 'log-uniform'), 'gamma': [0.01, 1]}
+
+    svr_lin = SVR(kernel='linear', gamma='auto')
+    sp_svr_lin = {'C': np.logspace(0.1, 500, 'log-uniform')}
+
+    svr_poly = SVR(kernel='poly', epsilon=.1)
+    sp_svr_poly = {'C': np.logspace(0.1, 1000, 'log-uniform'), 'gamma': [0.01, 1],
+                   'degree':[2,3], 'coef0':(-5,5)}
+
+    kr = KernelRidge(kernel='rbf'),
+    sp_kr = {"alpha": [1e0, 0.1, 1e-2, 1e-3],
+                  "gamma": np.logspace(-2, 2, 5)}
+
+
+    space = [sp_rf, sp_kr, sp_svr_lin, sp_svr_rbf, sp_svr_poly]
+    models = [rf, kr, svr_lin, svr_rbf, svr_poly]
+
+    clf = RegressorCV(models, space, validation_split=0.15, verbose=True, num_iter=11)
+    clf.fit(X, y)
+
+    print(clf.outputs)
+    clf.plot_error()
 
 if __name__ == '__main__':
     classifier_example()
